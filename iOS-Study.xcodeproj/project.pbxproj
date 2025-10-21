@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CBBC9D002EA76E7700468EAD /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC9CFF2EA76E7700468EAD /* ReactorKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CBBC9CD82EA76E4200468EAD /* iOS-Study.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-Study.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBBC9D002EA76E7700468EAD /* ReactorKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "iOS-Study";
 			packageProductDependencies = (
+				CBBC9CFF2EA76E7700468EAD /* ReactorKit */,
 			);
 			productName = "iOS-Study";
 			productReference = CBBC9CD82EA76E4200468EAD /* iOS-Study.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = CBBC9CCF2EA76E4200468EAD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBBC9CD92EA76E4200468EAD /* Products */;
 			projectDirPath = "";
@@ -320,6 +329,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactorKit/ReactorKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CBBC9CFF2EA76E7700468EAD /* ReactorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */;
+			productName = ReactorKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CBBC9CD02EA76E4200468EAD /* Project object */;
 }
