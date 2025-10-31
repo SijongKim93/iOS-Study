@@ -21,6 +21,8 @@ struct CounterFeature {
         var isAnimating = false
         var timerCount = 0
         var isTimerRunning = false
+        var timerTargetCount: Int? = nil
+        var isTimerCompleted = false
         var maxCount = 100
         var minCount = -100
     }
@@ -52,6 +54,9 @@ struct CounterFeature {
         case startTimer
         case stopTimer
         case timerTick
+        case setTimerTarget(Int?)
+        case timerCompleted
+        case clearTimerCompleted
         case clearHistory
         case undoLastAction
         case setMaxCount(Int)
@@ -138,6 +143,7 @@ struct CounterFeature {
             case .startTimer:
                 state.isTimerRunning = true
                 state.timerCount = 0
+                state.isTimerCompleted = false
                 return .run { send in
                     while true {
                         try await Task.sleep(for: .seconds(1))
@@ -148,14 +154,40 @@ struct CounterFeature {
                 
             case .stopTimer:
                 state.isTimerRunning = false
+                state.isTimerCompleted = false
                 return .cancel(id: TimerID())
                 
             case .timerTick:
-                if state.isTimerRunning {
-                    state.timerCount += 1
-                    state.count += 1
-                    state.history.append(HistoryItem(action: "타이머 증가", count: state.count))
+                guard state.isTimerRunning else { return .none }
+                
+                state.timerCount += 1
+                state.count += 1
+                state.history.append(HistoryItem(action: "타이머 증가", count: state.count))
+                
+
+                if let target = state.timerTargetCount, state.timerCount >= target {
+                    return .send(.timerCompleted)
                 }
+                
+                return .none
+                
+            case let .setTimerTarget(target):
+                state.timerTargetCount = target
+                state.isTimerCompleted = false
+                state.lastAction = target != nil ? "타이머 목표: \(target!)초" : "타이머 목표 제거"
+                return .none
+                
+            case .timerCompleted:
+                state.isTimerRunning = false
+                state.isTimerCompleted = true
+                state.lastAction = "타이머 완료! (\(state.timerCount)초)"
+                state.history.append(HistoryItem(action: "타이머 완료", count: state.count))
+                return .cancel(id: TimerID())
+                
+            case .clearTimerCompleted:
+                state.isTimerCompleted = false
+                state.timerTargetCount = nil
+                state.lastAction = "타이머 완료 상태 클리어"
                 return .none
                 
             case .clearHistory:
@@ -225,3 +257,4 @@ struct CounterFeature {
 
 // 타이머 ID를 위한 구조체
 private struct TimerID: Hashable {}
+ㅎ
