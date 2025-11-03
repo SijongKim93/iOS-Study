@@ -257,4 +257,78 @@ struct CounterFeature {
 
 // 타이머 ID를 위한 구조체
 private struct TimerID: Hashable {}
-ㅎ
+
+// 카운트 관련 통계 정보
+struct CountStatistics: Equatable {
+    var averageCount: Double
+    var maxCount: Int
+    var minCount: Int
+    var totalActions: Int
+}
+
+// 카운트 클라이언트 프로토콜
+struct CountClient {
+    var save: (Int) async throws -> Void
+    var load: () async throws -> Int?
+    var calculateStatistics: ([HistoryItem]) -> CountStatistics
+}
+
+// 카운트 클라이언트 의존성
+extension CountClient: DependencyKey {
+    static var liveValue: CountClient {
+        CountClient(
+            save: { count in
+                try await Task.sleep(for: .milliseconds(100))
+                UserDefaults.standard.set(count, forKey: "savedCount")
+            },
+            load: {
+                try await Task.sleep(for: .milliseconds(100))
+                let savedCount = UserDefaults.standard.integer(forKey: "savedCount")
+                return savedCount != 0 ? savedCount : nil
+            },
+            calculateStatistics: { history in
+                guard !history.isEmpty else {
+                    return CountStatistics(
+                        averageCount: 0,
+                        maxCount: 0,
+                        minCount: 0,
+                        totalActions: 0
+                    )
+                }
+                
+                let counts = history.map { $0.count }
+                let sum = counts.reduce(0, +)
+                let average = Double(sum) / Double(counts.count)
+                
+                return CountStatistics(
+                    averageCount: average,
+                    maxCount: counts.max() ?? 0,
+                    minCount: counts.min() ?? 0,
+                    totalActions: history.count
+                )
+            }
+        )
+    }
+    
+    static var testValue: CountClient {
+        CountClient(
+            save: { _ in },
+            load: { nil },
+            calculateStatistics: { _ in
+                CountStatistics(
+                    averageCount: 0,
+                    maxCount: 0,
+                    minCount: 0,
+                    totalActions: 0
+                )
+            }
+        )
+    }
+}
+
+extension DependencyValues {
+    var countClient: CountClient {
+        get { self[CountClient.self] }
+        set { self[CountClient.self] = newValue }
+    }
+}
