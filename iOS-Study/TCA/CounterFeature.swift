@@ -25,6 +25,19 @@ struct CounterFeature {
         var isTimerCompleted = false
         var maxCount = 100
         var minCount = -100
+        var stepSize = 1
+        var thresholdValue: Int? = nil 
+        var isThresholdReached = false 
+        var statistics: CountStatistics? = nil
+        var recentCounts: [Int] = []
+        var autoSaveEnabled = true
+        
+        mutating func updateRecentCounts() {
+            recentCounts.append(count)
+            if recentCounts.count > 10 {
+                recentCounts.removeFirst()
+            }
+        }
     }
     
     struct HistoryItem: Equatable, Identifiable {
@@ -66,31 +79,61 @@ struct CounterFeature {
         case performSequence
         case sequenceStep(Int)
         case checkBounds
+        
+        // 새로운 기능들
+        case setStepSize(Int)
+        case setThreshold(Int?)
+        case checkThreshold
+        case saveCount
+        case saveCountCompleted
+        case loadCount
+        case loadCountCompleted(Int?)
+        case calculateStatistics
+        case statisticsCalculated(CountStatistics)
+        case clearRecentCounts
+        case filterHistoryByDate(from: Date?, to: Date?)
+        case toggleAutoSave
+        case autoSaveTriggered
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
+            @Dependency(\.countClient) var countClient
             switch action {
             case .incrementButtonTapped:
-                state.count += 1
-                state.lastAction = "증가"
+                state.count += state.stepSize
+                state.lastAction = "\(state.stepSize) 증가"
                 state.errorMessage = nil
                 state.history.append(HistoryItem(action: "증가", count: state.count))
-                return .send(.checkBounds)
+                state.updateRecentCounts()
+                
+                var effects: [Effect<Action>] = [.send(.checkBounds), .send(.checkThreshold)]
+                if state.autoSaveEnabled {
+                    effects.append(.send(.autoSaveTriggered))
+                }
+                return .merge(effects)
                 
             case .decrementButtonTapped:
-                state.count -= 1
-                state.lastAction = "감소"
+                state.count -= state.stepSize
+                state.lastAction = "\(state.stepSize) 감소"
                 state.errorMessage = nil
                 state.history.append(HistoryItem(action: "감소", count: state.count))
-                return .send(.checkBounds)
+                state.updateRecentCounts()
+                
+                var effects: [Effect<Action>] = [.send(.checkBounds), .send(.checkThreshold)]
+                if state.autoSaveEnabled {
+                    effects.append(.send(.autoSaveTriggered))
+                }
+                return .merge(effects)
                 
             case .resetButtonTapped:
                 state.count = 0
                 state.lastAction = "리셋"
                 state.errorMessage = nil
                 state.history.append(HistoryItem(action: "리셋", count: state.count))
-                return .none
+                state.updateRecentCounts()
+                state.isThresholdReached = false
+                return state.autoSaveEnabled ? .send(.autoSaveTriggered) : .none
                 
             case .doubleButtonTapped:
                 state.count *= 2
@@ -250,6 +293,99 @@ struct CounterFeature {
                     state.errorMessage = "최소값 미만! \(state.minCount)로 제한됨"
                 }
                 return .none
+                
+            case let .setStepSize(size):
+                guard size > 0 else { return .none }
+                state.stepSize = size
+                state.lastAction = "증감폭 설정: \(size)"
+                return .none
+                
+            case let .setThreshold(value):
+                state.thresholdValue = value
+                state.isThresholdReached = false
+                state.lastAction = value != nil ? "임계값 설정: \(value!)" : "임계값 제거"
+                return .send(.checkThreshold)
+                
+            case .checkThreshold:
+                if let threshold = state.thresholdValue {
+                    let wasReached = state.isThresholdReached
+                    state.isThresholdReached = state.count >= threshold
+                    
+                    if !wasReached && state.isThresholdReached {
+                        state.lastAction = "임계값 도달! (\(threshold))"
+                        state.errorMessage = "🎯 임계값 \(threshold)에 도달했습니다!"
+                    }
+                } else {
+                    state.isThresholdReached = false
+                }
+                return .none
+                
+            case .saveCount:
+                state.lastAction = "저장 중..."
+                return .run { [count = state.count] send in
+                    try await countClient.save(count)
+                    await send(.saveCountCompleted)
+                }
+                
+            case .saveCountCompleted:
+                state.lastAction = "저장 완료"
+                return .none
+                
+            case .loadCount:
+                state.isLoading = true
+                state.lastAction = "로드 중..."
+                return .run { send in
+                    if let savedCount = try await countClient.load() {
+                        await send(.loadCountCompleted(savedCount))
+                    } else {
+                        await send(.loadCountCompleted(nil))
+                    }
+                }
+                
+            case let .loadCountCompleted(count):
+                state.isLoading = false
+                if let count = count {
+                    state.count = count
+                    state.lastAction = "로드 완료: \(count)"
+                    state.updateRecentCounts()
+                } else {
+                    state.lastAction = "저장된 값 없음"
+                }
+                return .none
+                
+            case .calculateStatistics:
+                let stats = countClient.calculateStatistics(state.history)
+                return .send(.statisticsCalculated(stats))
+                
+            case let .statisticsCalculated(stats):
+                state.statistics = stats
+                state.lastAction = "통계 계산 완료"
+                return .none
+                
+            case .clearRecentCounts:
+                state.recentCounts.removeAll()
+                state.lastAction = "최근 카운트 클리어"
+                return .none
+                
+            case let .filterHistoryByDate(from, to):
+                if let from = from {
+                    state.history = state.history.filter { $0.timestamp >= from }
+                }
+                if let to = to {
+                    state.history = state.history.filter { $0.timestamp <= to }
+                }
+                state.lastAction = "히스토리 필터링 완료"
+                return .send(.calculateStatistics)
+                
+            case .toggleAutoSave:
+                state.autoSaveEnabled.toggle()
+                state.lastAction = state.autoSaveEnabled ? "자동 저장 활성화" : "자동 저장 비활성화"
+                return .none
+                
+            case .autoSaveTriggered:
+                return .run { [count = state.count] send in
+                    try? await countClient.save(count)
+                }
             }
         }
     }
