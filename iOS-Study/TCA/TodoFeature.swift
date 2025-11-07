@@ -18,6 +18,7 @@ struct Todo: Equatable, Identifiable, Codable {
     var completedAt: Date?
     var dueDate: Date?
     var notes: String
+    var isFavorite: Bool
     
     init(
         id: UUID = UUID(),
@@ -27,7 +28,8 @@ struct Todo: Equatable, Identifiable, Codable {
         createdAt: Date = Date(),
         completedAt: Date? = nil,
         dueDate: Date? = nil,
-        notes: String = ""
+        notes: String = "",
+        isFavorite: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -37,6 +39,7 @@ struct Todo: Equatable, Identifiable, Codable {
         self.completedAt = completedAt
         self.dueDate = dueDate
         self.notes = notes
+        self.isFavorite = isFavorite
     }
 }
 
@@ -58,6 +61,7 @@ enum FilterOption: String, CaseIterable, Equatable {
     case all = "전체"
     case active = "미완료"
     case completed = "완료"
+    case favorites = "즐겨찾기"
 }
 
 enum SortOption: String, CaseIterable, Equatable {
@@ -65,6 +69,7 @@ enum SortOption: String, CaseIterable, Equatable {
     case priority = "우선순위"
     case dueDate = "마감일"
     case title = "제목"
+    case favorite = "즐겨찾기"
 }
 
 // MARK: - TodoFeature
@@ -96,6 +101,8 @@ struct TodoFeature {
         var active: Int
         var completionRate: Double
         var highPriorityActive: Int
+        var favorites: Int
+        var favoriteCompleted: Int
     }
     
     enum Action {
@@ -126,6 +133,7 @@ struct TodoFeature {
         case clearCompleted
         case markAllAsCompleted
         case markAllAsActive
+        case toggleFavorite(UUID)
         case calculateStatistics
         case statisticsCalculated(TodoStatistics)
         case applyFiltersAndSort
@@ -240,6 +248,16 @@ struct TodoFeature {
                     .send(.calculateStatistics)
                 ])
                 
+            case let .toggleFavorite(id):
+                if let index = state.todos.firstIndex(where: { $0.id == id }) {
+                    state.todos[index].isFavorite.toggle()
+                }
+                return .merge([
+                    .send(.applyFiltersAndSort),
+                    .send(.saveTodos),
+                    .send(.calculateStatistics)
+                ])
+
             case let .editTodo(id):
                 if let todo = state.todos.first(where: { $0.id == id }) {
                     state.editingTodo = todo
@@ -335,6 +353,8 @@ struct TodoFeature {
                     filtered = filtered.filter { !$0.isCompleted }
                 case .completed:
                     filtered = filtered.filter { $0.isCompleted }
+                case .favorites:
+                    filtered = filtered.filter { $0.isFavorite }
                 }
                 
                 // 검색
@@ -359,6 +379,12 @@ struct TodoFeature {
                         comparison = date1 < date2
                     case .title:
                         comparison = todo1.title < todo2.title
+                    case .favorite:
+                        if todo1.isFavorite == todo2.isFavorite {
+                            comparison = todo1.createdAt < todo2.createdAt
+                        } else {
+                            comparison = todo1.isFavorite && !todo2.isFavorite
+                        }
                     }
                     return state.isAscending ? comparison : !comparison
                 }
@@ -402,13 +428,17 @@ struct TodoFeature {
                 let active = total - completed
                 let completionRate = total > 0 ? Double(completed) / Double(total) * 100 : 0
                 let highPriorityActive = state.todos.filter { !$0.isCompleted && $0.priority == .high }.count
+                let favorites = state.todos.filter { $0.isFavorite }.count
+                let favoriteCompleted = state.todos.filter { $0.isFavorite && $0.isCompleted }.count
                 
                 let stats = TodoStatistics(
                     total: total,
                     completed: completed,
                     active: active,
                     completionRate: completionRate,
-                    highPriorityActive: highPriorityActive
+                    highPriorityActive: highPriorityActive,
+                    favorites: favorites,
+                    favoriteCompleted: favoriteCompleted
                 )
                 return .send(.statisticsCalculated(stats))
                 
