@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Mini Project") {
+                Section("Mini Projects") {
                     NavigationLink {
                         FocusTimerView()
                     } label: {
@@ -19,6 +19,16 @@ struct ContentView: View {
                     }
                     
                     Text("집중-휴식 사이클을 구성하고 자동 반복을 학습해보세요.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    
+                    NavigationLink {
+                        StudyProgressChartView()
+                    } label: {
+                        Label("학습 차트 실험", systemImage: "chart.bar.doc.horizontal")
+                    }
+                    
+                    Text("Swift Charts로 다양한 카테고리와 기간을 시각화해보세요.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
