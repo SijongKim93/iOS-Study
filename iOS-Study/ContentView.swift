@@ -31,6 +31,36 @@ struct ContentView: View {
                     Text("Swift Charts로 다양한 카테고리와 기간을 시각화해보세요.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    
+                    NavigationLink {
+                        ColorPickerView()
+                    } label: {
+                        Label("색상 선택기", systemImage: "paintpalette")
+                    }
+                    
+                    Text("ColorPicker를 사용한 색상 선택 및 미리보기 예제입니다.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    
+                    NavigationLink {
+                        SimpleCounterView()
+                    } label: {
+                        Label("간단한 카운터", systemImage: "number.circle")
+                    }
+                    
+                    Text("증감 단위와 범위를 설정할 수 있는 카운터 예제입니다.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    
+                    NavigationLink {
+                        RandomNumberView()
+                    } label: {
+                        Label("랜덤 숫자", systemImage: "dice")
+                    }
+                    
+                    Text("범위를 설정하고 랜덤 숫자를 생성하는 예제입니다.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
                 
                 Section("실험 중인 아키텍처") {

@@ -186,13 +186,6 @@ struct StudyProgressChartView: View {
                 }
                 
                 HStack {
-                    Label("평균 집중 시간", systemImage: "chart.bar.xaxis")
-                    Spacer()
-                    Text(viewModel.averageHoursLabel)
-                        .foregroundStyle(.secondary)
-                }
-                
-                HStack {
                     Label("목표 달성률", systemImage: "target")
                     Spacer()
                     Text(viewModel.targetAchievementLabel)
