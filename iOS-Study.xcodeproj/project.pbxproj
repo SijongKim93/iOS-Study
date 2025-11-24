@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB1813AD2ED058D6001DADA0 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = CB1813AC2ED058D6001DADA0 /* Nuke */; };
+		CB1813AF2ED058D6001DADA0 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = CB1813AE2ED058D6001DADA0 /* NukeExtensions */; };
+		CB1813B12ED058D6001DADA0 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB1813B02ED058D6001DADA0 /* NukeUI */; };
+		CB1813B32ED058D6001DADA0 /* NukeVideo in Frameworks */ = {isa = PBXBuildFile; productRef = CB1813B22ED058D6001DADA0 /* NukeVideo */; };
 		CBBC9D002EA76E7700468EAD /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC9CFF2EA76E7700468EAD /* ReactorKit */; };
 		CBBC9F8E2EAB6B9A00468EAD /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC9F8D2EAB6B9A00468EAD /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
@@ -28,6 +32,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB1813B12ED058D6001DADA0 /* NukeUI in Frameworks */,
+				CB1813B32ED058D6001DADA0 /* NukeVideo in Frameworks */,
+				CB1813AD2ED058D6001DADA0 /* Nuke in Frameworks */,
+				CB1813AF2ED058D6001DADA0 /* NukeExtensions in Frameworks */,
 				CBBC9F8E2EAB6B9A00468EAD /* ComposableArchitecture in Frameworks */,
 				CBBC9D002EA76E7700468EAD /* ReactorKit in Frameworks */,
 			);
@@ -74,6 +82,10 @@
 			packageProductDependencies = (
 				CBBC9CFF2EA76E7700468EAD /* ReactorKit */,
 				CBBC9F8D2EAB6B9A00468EAD /* ComposableArchitecture */,
+				CB1813AC2ED058D6001DADA0 /* Nuke */,
+				CB1813AE2ED058D6001DADA0 /* NukeExtensions */,
+				CB1813B02ED058D6001DADA0 /* NukeUI */,
+				CB1813B22ED058D6001DADA0 /* NukeVideo */,
 			);
 			productName = "iOS-Study";
 			productReference = CBBC9CD82EA76E4200468EAD /* iOS-Study.app */;
@@ -106,6 +118,7 @@
 			packageReferences = (
 				CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */,
 				CBBC9F8C2EAB6B9A00468EAD /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBBC9CD92EA76E4200468EAD /* Products */;
@@ -335,6 +348,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 		CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ReactorKit/ReactorKit";
@@ -354,6 +375,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CB1813AC2ED058D6001DADA0 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		CB1813AE2ED058D6001DADA0 /* NukeExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeExtensions;
+		};
+		CB1813B02ED058D6001DADA0 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
+		};
+		CB1813B22ED058D6001DADA0 /* NukeVideo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB1813AB2ED058D6001DADA0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeVideo;
+		};
 		CBBC9CFF2EA76E7700468EAD /* ReactorKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CBBC9CFE2EA76E7700468EAD /* XCRemoteSwiftPackageReference "ReactorKit" */;

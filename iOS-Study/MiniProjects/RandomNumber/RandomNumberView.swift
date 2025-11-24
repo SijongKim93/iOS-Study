@@ -103,7 +103,6 @@ struct RandomNumberView: View {
                 }
             }
         }
-        .navigationTitle("랜덤 숫자")
         .onAppear {
             if viewModel.currentNumber == nil {
                 viewModel.generate()
