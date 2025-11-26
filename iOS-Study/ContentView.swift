@@ -57,8 +57,18 @@ struct ContentView: View {
                     } label: {
                         Label("랜덤 숫자", systemImage: "dice")
                     }
-                    
+
                     Text("범위를 설정하고 랜덤 숫자를 생성하는 예제입니다.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+
+                    NavigationLink {
+                        GenericsExampleView()
+                    } label: {
+                        Label("제네릭", systemImage: "chevron.left.forwardslash.chevron.right")
+                    }
+
+                    Text("Swift의 제네릭 프로그래밍 개념을 학습하는 예제입니다.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
