@@ -53,12 +53,6 @@ struct RandomNumberView: View {
                     Text("\(viewModel.maxValue)")
                         .foregroundStyle(.secondary)
                 }
-                
-                if viewModel.minValue >= viewModel.maxValue {
-                    Label("최소값은 최대값보다 작아야 합니다", systemImage: "exclamationmark.triangle")
-                        .foregroundStyle(.orange)
-                        .font(.footnote)
-                }
             }
             
             if !viewModel.generatedNumbers.isEmpty {
