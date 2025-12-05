@@ -75,20 +75,6 @@ struct RandomNumberView: View {
                     }
                     
                     HStack {
-                        Label("평균", systemImage: "chart.bar")
-                        Spacer()
-                        Text(viewModel.averageText)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    HStack {
-                        Label("최소", systemImage: "arrow.down.circle")
-                        Spacer()
-                        Text("\(viewModel.minGenerated)")
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    HStack {
                         Label("최대", systemImage: "arrow.up.circle")
                         Spacer()
                         Text("\(viewModel.maxGenerated)")
