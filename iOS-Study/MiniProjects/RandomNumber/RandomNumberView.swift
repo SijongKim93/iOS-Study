@@ -54,34 +54,6 @@ struct RandomNumberView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            
-            if !viewModel.generatedNumbers.isEmpty {
-                Section("생성 기록") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            ForEach(viewModel.generatedNumbers.prefix(20)) { number in
-                                Text("\(number.value)")
-                                    .font(.system(.title3, design: .monospaced))
-                                    .fontWeight(.semibold)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        Capsule()
-                                            .fill(.blue.opacity(0.2))
-                                    )
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-                    
-                    HStack {
-                        Label("최대", systemImage: "arrow.up.circle")
-                        Spacer()
-                        Text("\(viewModel.maxGenerated)")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
         }
         .onAppear {
             if viewModel.currentNumber == nil {
