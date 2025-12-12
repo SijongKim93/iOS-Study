@@ -71,6 +71,16 @@ struct ContentView: View {
                     Text("Swift의 제네릭 프로그래밍 개념을 학습하는 예제입니다.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+
+                    NavigationLink {
+                        ClosuresExampleView()
+                    } label: {
+                        Label("클로저: Escaping", systemImage: "curlybraces")
+                    }
+
+                    Text("Escaping과 Non-escaping 클로저의 차이를 이해하는 예제입니다.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
                 
                 Section("실험 중인 아키텍처") {
