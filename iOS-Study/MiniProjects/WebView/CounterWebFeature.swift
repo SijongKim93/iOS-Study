@@ -14,6 +14,4 @@ public enum NavigationStep {
     case messageRoom(roomID: String, nickname: String)
     case myPointHistory
     case commonWebView(title: String, url: String, isShowTitleBar: Bool)
-    case webView(url: String, headers: [String: String]?, service: String?)
-    case userProfile(memberIndex: String, isCommunity: Bool, departFrom: String)
 }
