@@ -19,35 +19,6 @@ struct SimpleCounterView: View {
                         .monospacedDigit()
                         .foregroundStyle(viewModel.countColor)
                         .frame(maxWidth: .infinity)
-                    
-                    HStack(spacing: 16) {
-                        Button {
-                            viewModel.decrement()
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.system(size: 44))
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(viewModel.count <= viewModel.minValue)
-                        
-                        Button {
-                            viewModel.reset()
-                        } label: {
-                            Image(systemName: "arrow.counterclockwise")
-                                .font(.system(size: 32))
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(viewModel.count == 0)
-                        
-                        Button {
-                            viewModel.increment()
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 44))
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(viewModel.count >= viewModel.maxValue)
-                    }
                 }
                 .padding(.vertical, 16)
                 .listRowBackground(Color.clear)
