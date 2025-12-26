@@ -24,28 +24,6 @@ struct SimpleCounterView: View {
                 .listRowBackground(Color.clear)
             }
             
-            Section("설정") {
-                Stepper(value: $viewModel.step, in: 1...10) {
-                    Label("증감 단위", systemImage: "arrow.up.arrow.down")
-                    Spacer()
-                    Text("\(viewModel.step)")
-                        .foregroundStyle(.secondary)
-                }
-                
-                Stepper(value: $viewModel.minValue, in: -100...0) {
-                    Label("최소값", systemImage: "arrow.down")
-                    Spacer()
-                    Text("\(viewModel.minValue)")
-                        .foregroundStyle(.secondary)
-                }
-                
-                Stepper(value: $viewModel.maxValue, in: 0...1000) {
-                    Label("최대값", systemImage: "arrow.up")
-                    Spacer()
-                    Text("\(viewModel.maxValue)")
-                        .foregroundStyle(.secondary)
-                }
-            }
             
             if !viewModel.history.isEmpty {
                 Section("변경 기록") {
